@@ -1,0 +1,44 @@
+Archivo: Benja/presentacion_mejoras.ipynb
+Tipo: Jupyter Notebook (presentación interactiva)
+
+QUÉ HACE
+--------
+Notebook de presentación mejorado con narrativa revisada y figuras de alta calidad.
+Al ejecutarse, primero corre figures_mejoradas.py para generar (o regenerar) todas
+las figuras, y luego las presenta en orden con celdas Markdown explicativas.
+
+Estructura:
+  - Celda 0 (MD):  Título, contexto y resumen ejecutivo con los 3 hallazgos clave.
+  - Celda 2 (MD):  Datos y variables (tabla de selección, criterios de descarte).
+  - Celda 5 (MD):  EDA — transformaciones y correlaciones + interpretación del gráfico.
+  - Celda 7 (MD):  PCA — criterios de retención, resultados de Horn, lectura del scree.
+  - Celda 10 (MD): Interpretación de cargas: qué mide cada componente en lenguaje llano.
+  - Celda 13 (MD): Biplot — cómo leerlo y qué observar sobre la separación por ingreso.
+  - Celda 16 (MD): Clustering — decisión metodológica sobre variables completas vs. PCA.
+  - Celda 19 (MD): Clusters k=2 — descripción de cada grupo con matiz sobre el continuo.
+  - Celda 23 (MD): Silhouette — interpretación en lenguaje accesible.
+  - Celda 26 (MD): Evolución temporal — metodología del espacio común, por qué es válido.
+  - Celda 30 (MD): Transición + descomposición — quién avanzó y qué lo impulsó.
+  - Celda 33 (MD): Conclusiones — 4 hallazgos principales en lenguaje ejecutivo.
+
+POR QUÉ SE MODIFICÓ / CREÓ
+---------------------------
+El notebook original (notebooks/presentacion.ipynb) presenta los resultados de forma
+muy concisa, con poca narrativa para el lector no especializado. Las celdas Markdown
+son cortas y asumen que el lector ya conoce los métodos. Se creó esta versión mejorada
+para comunicar al público general o a un evaluador que espera un informe narrativo.
+
+Cambios específicos:
+  - Se agregaron secciones de "Cómo leer este gráfico" en cada figura.
+  - Se sustituyó la jerga técnica por lenguaje accesible ("gradiente de desarrollo"
+    en lugar de "PC1 positivo").
+  - Se redactaron las conclusiones en formato ejecutivo (qué, por qué, implicación).
+  - Se corrigió ortografía y redacción en todas las celdas.
+  - Se eliminaron frases redundantes y tecnicismos innecesarios.
+
+QUÉ MEJORA APORTA
+-----------------
+Un lector sin formación en análisis multivariado puede entender cada sección porque:
+  1. Cada figura viene precedida de una explicación de qué es y cómo interpretarla.
+  2. Los resultados numéricos se acompañan de su interpretación en lenguaje llano.
+  3. Las limitaciones y advertencias están integradas en el flujo narrativo, no al pie.

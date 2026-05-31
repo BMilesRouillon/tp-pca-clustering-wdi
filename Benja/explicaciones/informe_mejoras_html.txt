@@ -1,0 +1,46 @@
+Archivo: Benja/informe_mejoras.html
+Tipo: informe HTML standalone
+
+QUÉ HACE
+--------
+Informe académico standalone en HTML con diseño profesional. No requiere compilación
+ni dependencias externas (solo conexión a Google Fonts para Nunito). Las imágenes se
+referencian como rutas relativas a Benja/figures/.
+
+Estructura de secciones:
+  - Hero header: título, subtítulo institucional y fecha.
+  - 4 tarjetas de resumen ejecutivo: métricas clave de un vistazo.
+  - Sección 1 — Datos: fuente, cortes temporales, tabla de variables.
+  - Sección 2 — EDA: transformaciones, correlaciones + figura.
+  - Sección 3 — PCA: criterios de retención, cargas, biplot.
+  - Sección 4 — Clustering: metodología, métricas, resultados k=2 y k=3, silhouette.
+  - Sección 5 — Evolución temporal: trayectorias, transición, descomposición.
+  - Sección 6 — Conclusiones: lista numerada + 4 tarjetas de hallazgos.
+
+Diseño CSS:
+  - Tipografía Nunito (Google Fonts CDN) con fallback Arial.
+  - Paleta institucional completa aplicada en navegación, encabezados, tablas, chips,
+    callouts y botones de la barra de navegación fija.
+  - Layout responsive con grid automático.
+  - Navegación sticky (se fija al tope al hacer scroll).
+  - Cards con sombra y esquinas redondeadas.
+  - Callouts de colores semánticos (info=azul, warn=amarillo, success=verde, danger=rojo).
+  - Leyendas de figuras con borde izquierdo azul para diferenciarlas del cuerpo.
+
+POR QUÉ SE MODIFICÓ / CREÓ
+---------------------------
+El informe original (reports/informe_borrador.html) fue generado con Quarto y tiene
+estilo genérico Bootstrap. Esta versión mejorada:
+  - Aplica la paleta institucional en todos los elementos visuales.
+  - Usa Nunito para una tipografía más moderna y legible.
+  - Tiene un diseño visual más cuidado (hero, tarjetas, navegación sticky).
+  - Incluye contexto explícito para que cada figura sea auto-explicativa.
+  - Corrige errores ortográficos y de redacción presentes en el borrador.
+  - Simplifica explicaciones excesivamente técnicas sin perder precisión.
+
+QUÉ MEJORA APORTA
+-----------------
+El informe puede enviarse como un único archivo HTML que funciona en cualquier
+navegador moderno. La experiencia de lectura es lineal (de arriba a abajo) o
+navegable desde el menú fijo. El nivel de detalle es apropiado para un público
+ejecutivo o académico que no necesariamente conoce los métodos estadísticos.

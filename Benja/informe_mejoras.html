@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patrones de desarrollo mundial — PCA y Clustering · WDI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Variables ────────────────────────────────────────────────────────── */
+    :root {
+      --azul-principal:  #174EA6;
+      --azul-medio:      #4285F4;
+      --azul-claro:      #D2E3FC;
+      --rojo-principal:  #A50E0E;
+      --rojo-medio:      #EA4335;
+      --rojo-claro:      #FAD2CF;
+      --naranja:         #E37400;
+      --amarillo:        #FBBC04;
+      --amarillo-claro:  #FEEFC3;
+      --verde-principal: #0D652D;
+      --verde-medio:     #34A853;
+      --verde-claro:     #CEEAD6;
+      --gris-claro:      #F1F3F4;
+      --gris-medio:      #9AA0A6;
+      --negro:           #202124;
+      --blanco:          #FFFFFF;
+      --font:            'Nunito', Arial, sans-serif;
+      --max-w:           1080px;
+      --shadow:          0 2px 12px rgba(23,78,166,.10);
+      --radius:          10px;
+    }
+
+    /* ── Reset y base ─────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: var(--font);
+      color: var(--negro);
+      background: var(--blanco);
+      line-height: 1.7;
+    }
+    img { max-width: 100%; border-radius: var(--radius); display: block; }
+    a   { color: var(--azul-medio); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Barra de navegación ──────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--azul-principal);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    }
+    nav .brand {
+      color: white;
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 0.85rem 0;
+      flex-shrink: 0;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 0.2rem;
+      flex-wrap: wrap;
+      margin-left: auto;
+    }
+    nav ul a {
+      color: var(--azul-claro);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+    nav ul a:hover { background: rgba(255,255,255,.15); color: white; text-decoration: none; }
+
+    /* ── Hero / cabecera ──────────────────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, var(--azul-principal) 0%, #1a6fc4 100%);
+      color: white;
+      padding: 4rem 2rem 3rem;
+      text-align: center;
+    }
+    header .tag {
+      display: inline-block;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.9rem;
+      margin-bottom: 1.2rem;
+    }
+    header h1 {
+      font-size: clamp(1.6rem, 3vw, 2.6rem);
+      font-weight: 800;
+      line-height: 1.25;
+      max-width: 780px;
+      margin: 0 auto 1rem;
+    }
+    header .subtitle {
+      font-size: 1.05rem;
+      opacity: 0.88;
+      max-width: 640px;
+      margin: 0 auto 2.2rem;
+    }
+    header .meta {
+      font-size: 0.82rem;
+      opacity: 0.7;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Cards del resumen ejecutivo ─────────────────────────────────────── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.2rem;
+      max-width: var(--max-w);
+      margin: -2.5rem auto 0;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 10;
+    }
+    .summary-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem 1.6rem;
+      border-top: 4px solid var(--azul-principal);
+    }
+    .summary-card .number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--azul-principal);
+      line-height: 1;
+      margin-bottom: 0.35rem;
+    }
+    .summary-card .label {
+      font-size: 0.88rem;
+      color: var(--gris-medio);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .summary-card p {
+      font-size: 0.92rem;
+      margin-top: 0.5rem;
+      color: var(--negro);
+    }
+
+    /* ── Contenido principal ─────────────────────────────────────────────── */
+    main {
+      max-width: var(--max-w);
+      margin: 4rem auto 2rem;
+      padding: 0 1.5rem;
+    }
+
+    /* ── Secciones ────────────────────────────────────────────────────────── */
+    section {
+      margin-bottom: 4rem;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid var(--azul-claro);
+    }
+    .section-num {
+      background: var(--azul-principal);
+      color: white;
+      font-weight: 800;
+      font-size: 0.9rem;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .section-title h2 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--azul-principal);
+    }
+
+    /* ── Figuras ─────────────────────────────────────────────────────────── */
+    .fig-block {
+      margin: 2rem 0;
+      background: var(--gris-claro);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+    .fig-block img {
+      margin: 0 auto;
+      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    }
+    .fig-caption {
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: #555;
+      line-height: 1.55;
+      padding: 0.8rem 1rem;
+      background: white;
+      border-left: 3px solid var(--azul-medio);
+      border-radius: 0 6px 6px 0;
+    }
+    .fig-caption strong { color: var(--azul-principal); }
+
+    /* ── Callout / nota ──────────────────────────────────────────────────── */
+    .callout {
+      border-radius: var(--radius);
+      padding: 1.1rem 1.4rem;
+      margin: 1.4rem 0;
+      font-size: 0.93rem;
+    }
+    .callout-info { background: var(--azul-claro); border-left: 4px solid var(--azul-principal); }
+    .callout-warn { background: var(--amarillo-claro); border-left: 4px solid var(--amarillo); }
+    .callout-success { background: var(--verde-claro); border-left: 4px solid var(--verde-principal); }
+    .callout-danger  { background: var(--rojo-claro);  border-left: 4px solid var(--rojo-principal); }
+    .callout strong  { display: block; margin-bottom: 0.3rem; font-size: 0.8rem;
+                       text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ── Tablas ──────────────────────────────────────────────────────────── */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.9rem;
+      margin: 1.2rem 0;
+    }
+    thead { background: var(--azul-principal); color: white; }
+    th, td { padding: 0.6rem 0.9rem; text-align: left; }
+    tbody tr:nth-child(even) { background: var(--gris-claro); }
+    tbody tr:hover { background: var(--azul-claro); }
+    th { font-weight: 700; font-size: 0.82rem; letter-spacing: 0.04em; }
+
+    /* ── Chips de metodología ────────────────────────────────────────────── */
+    .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.8rem 0; }
+    .chip {
+      display: inline-block;
+      padding: 0.25rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: var(--azul-claro);
+      color: var(--azul-principal);
+      border: 1px solid var(--azul-medio);
+    }
+
+    /* ── Grilla de hallazgos ─────────────────────────────────────────────── */
+    .findings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .finding-card {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: var(--radius);
+      padding: 1.1rem 1.2rem;
+      box-shadow: var(--shadow);
+    }
+    .finding-card .icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+    .finding-card h4 { font-size: 0.92rem; font-weight: 700; color: var(--azul-principal); margin-bottom: 0.3rem; }
+    .finding-card p  { font-size: 0.84rem; color: #444; }
+
+    /* ── Separador ───────────────────────────────────────────────────────── */
+    hr { border: none; border-top: 1px solid #e5e7eb; margin: 2.5rem 0; }
+
+    /* ── Conclusiones ────────────────────────────────────────────────────── */
+    .conclusion-list {
+      counter-reset: conclusions;
+      list-style: none;
+      padding: 0;
+    }
+    .conclusion-list li {
+      counter-increment: conclusions;
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      align-items: flex-start;
+    }
+    .conclusion-list li::before {
+      content: counter(conclusions);
+      background: var(--azul-principal);
+      color: white;
+      font-weight: 800;
+      font-size: 0.9rem;
+      min-width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    /* ── Footer ──────────────────────────────────────────────────────────── */
+    footer {
+      background: var(--negro);
+      color: #aaa;
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.82rem;
+      margin-top: 3rem;
+    }
+    footer strong { color: white; }
+
+    /* ── Responsive ──────────────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      nav ul { display: none; }
+      .summary-grid { margin-top: -1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ────────────────────────────────────────────────────── NAVEGACIÓN ── -->
+<nav>
+  <span class="brand">WDI · PCA + Clustering</span>
+  <ul>
+    <li><a href="#datos">Datos</a></li>
+    <li><a href="#eda">Exploratorio</a></li>
+    <li><a href="#pca">PCA</a></li>
+    <li><a href="#clustering">Clustering</a></li>
+    <li><a href="#temporal">Evolución</a></li>
+    <li><a href="#conclusiones">Conclusiones</a></li>
+  </ul>
+</nav>
+
+<!-- ────────────────────────────────────────────────────────── HERO ── -->
+<header>
+  <div class="tag">Análisis Multivariado · Universidad Austral · 2024</div>
+  <h1>Patrones de desarrollo mundial: PCA y Clustering sobre indicadores del Banco Mundial</h1>
+  <p class="subtitle">
+    ¿Qué dimensiones organizan el desarrollo global? ¿Existen grupos naturales de países?
+    ¿Cómo evolucionaron entre 2005 y 2023? Análisis de 191 países y 14 indicadores.
+  </p>
+  <p class="meta">World Development Indicators (WDI) · Cortes 2005 y 2023 · Pipeline reproducible</p>
+</header>
+
+<!-- ──────────────────────────────────────────── RESUMEN EJECUTIVO ── -->
+<div class="summary-grid">
+  <div class="summary-card">
+    <div class="number">191</div>
+    <div class="label">Países analizados</div>
+    <p>Cobertura global sobre datos WDI del Banco Mundial con cobertura ≥ 75 % por variable.</p>
+  </div>
+  <div class="summary-card" style="border-top-color:var(--verde-principal)">
+    <div class="number" style="color:var(--verde-principal)">41 %</div>
+    <div class="label">Varianza en PC1</div>
+    <p>Un solo eje resume el nivel de desarrollo de los países: ingreso, salud y conectividad.</p>
+  </div>
+  <div class="summary-card" style="border-top-color:var(--naranja)">
+    <div class="number" style="color:var(--naranja)">40</div>
+    <div class="label">Países que «graduaron»</div>
+    <p>Entre 2005 y 2023, 40 países pasaron del grupo en desarrollo al desarrollado. Ninguno retrocedió.</p>
+  </div>
+  <div class="summary-card" style="border-top-color:var(--rojo-principal)">
+    <div class="number" style="color:var(--rojo-principal)">47 %</div>
+    <div class="label">Avance explicado por Internet</div>
+    <p>El acceso a Internet lideró el progreso, muy por delante del PBI (9 %) y la urbanización.</p>
+  </div>
+</div>
+
+<!-- ────────────────────────────────────────────── CONTENIDO PRINCIPAL ── -->
+<main>
+
+  <!-- ═══════════════════════════════════ 1 · DATOS Y VARIABLES ══════════ -->
+  <section id="datos">
+    <div class="section-title">
+      <span class="section-num">1</span>
+      <h2>Datos y variables</h2>
+    </div>
+
+    <p>
+      Usamos el <strong>World Development Indicators (WDI)</strong> del Banco Mundial,
+      la base de datos de desarrollo más comprehensiva del mundo, con datos para más
+      de 217 países entre 1990 y 2024. Para el análisis se seleccionaron dos cortes temporales:
+    </p>
+
+    <table style="margin:1.2rem 0">
+      <thead><tr><th>Corte</th><th>Año</th><th>Justificación</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Moderno</strong></td><td>2023</td>
+            <td>Año estable post-COVID. Todos los indicadores superan 78 % de cobertura.
+                2021 y 2022 fueron descartados por distorsiones post-pandemia e inflación.</td></tr>
+        <tr><td><strong>Temprano</strong></td><td>2005</td>
+            <td>Año más antiguo desde 2000 donde todas las variables seleccionadas
+                superan el umbral de cobertura del 75 %. Permite una ventana de 18 años.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin:1.8rem 0 0.8rem; color:var(--azul-principal)">Variables seleccionadas (14)</h3>
+    <p>Se descartaron tres variables candidatas: Índice de Gini (datos esporádicos, 26-40 % de cobertura),
+    Gasto en educación (cobertura baja e inconsistente) e INB PPA (redundante con el PBI per cápita, <em>r</em> ≈ 0,98).</p>
+
+    <table>
+      <thead><tr><th>Dimensión</th><th>Variables</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Ingreso y crecimiento</strong></td>
+            <td>PBI per cápita (US$ constantes 2015), Crecimiento anual del PBI</td></tr>
+        <tr><td><strong>Precios y empleo</strong></td>
+            <td>Inflación al consumidor, Desempleo</td></tr>
+        <tr><td><strong>Estructura económica</strong></td>
+            <td>Formación bruta de capital, Exportaciones, Importaciones, Agricultura, Industria, Servicios — todos como % del PBI</td></tr>
+        <tr><td><strong>Desarrollo humano</strong></td>
+            <td>Urbanización (% población), Esperanza de vida, Acceso a Internet</td></tr>
+        <tr><td><strong>Medioambiente</strong></td>
+            <td>Emisiones de CO₂ per cápita (toneladas, excl. LULUCF)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-info">
+      <strong>Nota técnica</strong>
+      Los datos faltantes (≤ 15 % por variable tras filtrar países con más del 40 % de variables ausentes)
+      se imputaron con <em>K-Nearest Neighbors</em> (k = 5) dentro de cada año por separado,
+      evitando usar información futura para imputar el pasado. Los resultados son prácticamente
+      idénticos con imputación MICE (ARI = 0,979).
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ 2 · EDA ═════════════════════════ -->
+  <section id="eda">
+    <div class="section-title">
+      <span class="section-num">2</span>
+      <h2>Análisis exploratorio</h2>
+    </div>
+
+    <h3 style="margin-bottom:0.8rem; color:var(--azul-principal)">Transformaciones de variables</h3>
+    <p>
+      PCA y k-means son sensibles a distribuciones muy asimétricas: variables con colas largas
+      distorsionan las distancias y pueden dominar artificialmente los ejes. Antes de modelar,
+      cada variable fue transformada individualmente según su asimetría observada:
+    </p>
+
+    <table>
+      <thead><tr><th>Transformación</th><th>Variables</th><th>Razón</th></tr></thead>
+      <tbody>
+        <tr><td>Logaritmo natural</td><td>PBI per cápita</td>
+            <td>Datos en múltiples órdenes de magnitud (US$250 a 111.000); asimetría 2,2 → ≈ 0</td></tr>
+        <tr><td>log(1 + x)</td><td>Emisiones CO₂</td>
+            <td>Variable positiva con valores cercanos a cero; asimetría 5,4 → 0,5</td></tr>
+        <tr><td>Yeo-Johnson</td><td>Inflación, Desempleo, Exportaciones, Importaciones, Agricultura, Industria</td>
+            <td>Admite valores negativos (inflación); el parámetro λ se estima de los datos</td></tr>
+        <tr><td>Sin transformar</td><td>Crecimiento PBI, Cap. Fijo, Servicios, Urbanización, Esp. vida, Internet</td>
+            <td>Asimetría baja o distribución acotada naturalmente</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-info">
+      <strong>Estandarización</strong>
+      Después de transformar, todas las variables se estandarizaron (media = 0, desviación estándar = 1)
+      con <code>StandardScaler</code>. Esto garantiza que ninguna variable domine por su escala.
+      Se prefirió <code>StandardScaler</code> sobre <code>RobustScaler</code> porque este último,
+      al dividir por el rango intercuartílico, amplifica outliers extremos (como el crecimiento
+      del PBI de Macao en 2023, +75 %) hasta distorsionar el análisis completo.
+    </div>
+
+    <h3 style="margin:1.8rem 0 0.8rem; color:var(--azul-principal)">Correlaciones entre variables</h3>
+
+    <div class="fig-block">
+      <img src="figures/fig_correlacion.png" alt="Matriz de correlaciones de Spearman entre las 14 variables">
+      <div class="fig-caption">
+        <strong>Cómo leer este gráfico:</strong> el triángulo superior muestra el coeficiente de correlación
+        de Spearman (ρ) entre cada par de variables. Azul = correlación positiva, rojo = negativa;
+        intensidad proporcional a la magnitud. La diagonal muestra la distribución (histograma) de cada variable.<br><br>
+        <strong>Qué observar:</strong> hay un bloque azul fuerte entre PBI per cápita, Internet,
+        Esperanza de vida, Urbanización y CO₂ — todas miden facetas del mismo fenómeno subyacente:
+        el nivel de desarrollo. La agricultura correlaciona negativamente con todas ellas.
+        Esta estructura es exactamente lo que capturará PC1.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ 3 · PCA ══════════════════════════ -->
+  <section id="pca">
+    <div class="section-title">
+      <span class="section-num">3</span>
+      <h2>Análisis de Componentes Principales (PCA)</h2>
+    </div>
+
+    <p>
+      El PCA transforma las 14 variables correlacionadas en un conjunto de ejes ortogonales
+      (<em>componentes principales</em>) ordenados de mayor a menor varianza explicada.
+      Esto permite visualizar la estructura global de los datos en pocas dimensiones.
+    </p>
+
+    <h3 style="margin:1.5rem 0 0.8rem; color:var(--azul-principal)">¿Cuántos componentes retener?</h3>
+    <p>
+      Se aplicó el <strong>Análisis Paralelo de Horn</strong>: se generan 1.000 matrices de datos
+      aleatorios del mismo tamaño y se retienen solo los componentes cuyos autovalores <em>superan</em>
+      el percentil 95 del ruido puro. Es el criterio más riguroso y evita tanto la sub- como la
+      sobreestimación (el criterio de Kaiser, autovalor > 1, tiende a sobreestimar).
+    </p>
+
+    <div class="chips">
+      <span class="chip">Kaiser: 4 componentes</span>
+      <span class="chip">80 % de varianza: 6 componentes</span>
+      <span class="chip" style="background:var(--verde-claro);color:var(--verde-principal);border-color:var(--verde-medio)">
+        ✓ Horn (p95): 3 componentes — ADOPTADO
+      </span>
+    </div>
+
+    <div class="fig-block">
+      <img src="figures/fig_scree.png" alt="Scree plot y análisis paralelo de Horn">
+      <div class="fig-caption">
+        <strong>Cómo leer este gráfico:</strong> las barras azules oscuras son los tres componentes
+        retenidos por Horn. Las barras azules claras son descartadas (ruido). La línea naranja acumula
+        la varianza explicada. Los triángulos rojos marcan el umbral de Horn: por encima hay señal,
+        por debajo hay ruido estadístico. Los tres componentes retenidos explican el 64,9 % de la varianza total.
+      </div>
+    </div>
+
+    <h3 style="margin:1.5rem 0 0.8rem; color:var(--azul-principal)">¿Qué mide cada componente?</h3>
+
+    <div class="fig-block">
+      <img src="figures/fig_loadings.png" alt="Cargas factoriales de PC1, PC2 y PC3">
+      <div class="fig-caption">
+        <strong>Cómo leer este gráfico:</strong> cada barra muestra cuánto contribuye una variable
+        al componente. Azul = relación positiva (a mayor valor de la variable, mayor el componente).
+        Rojo = relación inversa. Las líneas punteadas marcan los umbrales ±0,5.<br><br>
+        <strong>PC1 (41 %):</strong> agrupa Internet, Esperanza de vida, PBI per cápita, CO₂ y Urbanización
+        (positivos) contra Agricultura (negativo). Es el eje del desarrollo: cuanto más a la derecha
+        del biplot, más «desarrollado» en este sentido integral.<br><br>
+        <strong>PC2 (13 %):</strong> opone países industrializados (Industria +, Capital +) a los orientados
+        a servicios.<br>
+        <strong>PC3 (10 %):</strong> diferencia economías abiertas al comercio internacional.
+      </div>
+    </div>
+
+    <h3 style="margin:1.5rem 0 0.8rem; color:var(--azul-principal)">Círculo de correlaciones</h3>
+
+    <div class="fig-block">
+      <img src="figures/fig_circulo_cargas.png" alt="Círculo de correlaciones PC1-PC2">
+      <div class="fig-caption">
+        <strong>Cómo leer este gráfico:</strong> cada flecha representa una variable. La longitud
+        indica qué tan bien está representada por PC1 y PC2 (más cerca del círculo exterior = mejor).
+        La dirección indica su relación con cada eje: horizontal = PC1, vertical = PC2.
+        Azul = correlación positiva con PC1; rojo = negativa.<br><br>
+        <strong>Qué observar:</strong> Internet, Esperanza de vida, PBI per cápita y Urbanización
+        apuntan a la derecha — son las variables que definen el polo «desarrollado» en PC1.
+        Agricultura apunta a la izquierda — polo opuesto. Industria apunta hacia arriba,
+        dominando PC2. Variables cortas (Inflación, Crecimiento PBI) están mal representadas
+        por estos dos ejes y requieren PC3 para ser interpretadas.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ 4 · CLUSTERING ══════════════════ -->
+  <section id="clustering">
+    <div class="section-title">
+      <span class="section-num">4</span>
+      <h2>Clustering de países</h2>
+    </div>
+
+    <div class="callout callout-info">
+      <strong>Decisión metodológica clave</strong>
+      El clustering se realizó sobre las <strong>14 variables originales</strong> (no sobre el espacio PCA).
+      Clusterizar sobre los PCs primero podría descartar estructura de grupos que vive en componentes
+      de menor varianza (<em>tandem analysis</em>). Como verificación: las particiones sobre 14 variables
+      y sobre 3 PCs son <strong>idénticas (ARI = 1,00)</strong> — lo que demuestra (en lugar de asumir)
+      que ambos enfoques coinciden aquí.
+    </div>
+
+    <h3 style="margin:1.5rem 0 0.8rem; color:var(--azul-principal)">¿Cuántos grupos?</h3>
+
+    <div class="fig-block">
+      <img src="figures/fig_metricas_k.png" alt="Métricas de selección del número de clusters">
+      <div class="fig-caption">
+        <strong>Cómo leer este gráfico:</strong> cada panel evalúa la calidad del clustering para
+        distintos valores de k. El punto rojo marca k = 2, elegido porque los cuatro criterios
+        lo señalan: Silhouette es máximo, Calinski-Harabasz es máximo, Davies-Bouldin es mínimo
+        y hay un quiebre claro en la inercia.<br><br>
+        Adicionalmente: el <em>Gap Statistic</em> (no mostrado) también señala k = 2.
+        La <strong>estabilidad bootstrap</strong> (criterio de Hennig, Jaccard > 0,75 = estable)
+        confirma: k = 2 obtiene 0,96 y 0,94 por cluster; k = 4 colapsa (mín. 0,27).
+      </div>
+    </div>
+
+    <h3 style="margin:1.5rem 0 0.8rem; color:var(--azul-principal)">Resultado principal: dos grupos</h3>
+
+    <div class="fig-block">
+      <img src="figures/fig_clusters_k2.png" alt="Clusters k=2 sobre proyección PCA">
+      <div class="fig-caption">
+        <strong>Cómo leer este gráfico:</strong> cada punto es un país, coloreado según el cluster
+        asignado por k-means. El gráfico proyecta los clusters sobre PC1-PC2 (solo para visualización;
+        el clustering se realizó sobre las 14 variables).<br><br>
+        <strong>Grupo rojo — En desarrollo (n ≈ 99):</strong> bajo PBI per cápita, menor esperanza
+        de vida, baja cobertura de Internet y alta participación agrícola. Incluye la mayor parte
+        de África Subsahariana, Asia del Sur y partes de América Latina.<br><br>
+        <strong>Grupo azul — Desarrollado (n ≈ 92):</strong> economías de alta productividad,
+        larga esperanza de vida, acceso masivo a Internet y economías orientadas a servicios.
+      </div>
+    </div>
+
+    <div class="callout callout-warn">
+      <strong>Advertencia de interpretación</strong>
+      El desarrollo es un <em>continuo</em>, no una dicotomía. El silhouette moderado (0,28)
+      y el análisis con HDBSCAN (que marca ~59 % de países como "ruido" entre grupos)
+      confirman que no hay saltos nítidos en los datos. Los dos grupos son la partición más
+      informativa del gradiente, no categorías rígidas ni definitivas.
+    </div>
+
+    <h3 style="margin:1.5rem 0 0.8rem; color:var(--azul-principal)">Vista complementaria: tres grupos</h3>
+
+    <div class="fig-block">
+      <img src="figures/fig_clusters_k3.png" alt="Clusters k=3 sobre proyección PCA">
+      <div class="fig-caption">
+        Con k = 3 emerge un <strong>grupo intermedio «emergente»</strong> (naranja) que captura países en
+        transición entre los dos extremos: principalmente economías de ingreso medio con industrialización
+        creciente. Permite recuperar matices sobre la heterogeneidad del mundo en desarrollo
+        (Jaccard 0,73–0,88 por cluster — estable, aunque menos que k = 2).
+      </div>
+    </div>
+
+    <h3 style="margin:1.5rem 0 0.8rem; color:var(--azul-principal)">Validación y calidad del clustering</h3>
+
+    <div class="fig-block">
+      <img src="figures/fig_silhouette_k2.png" alt="Diagrama de silhouette k=2">
+      <div class="fig-caption">
+        <strong>Cómo leer este gráfico:</strong> cada barra horizontal representa un país.
+        Barras más largas indican mejor asignación al cluster. La línea punteada es el promedio.
+        La mayoría de los países del grupo azul (desarrollado) tienen coeficientes positivos sólidos,
+        mientras que el grupo rojo muestra más variabilidad interna — coherente con la mayor
+        heterogeneidad de los países en desarrollo.
+      </div>
+    </div>
+
+    <h3 style="margin:1.5rem 0 0.8rem; color:var(--azul-principal)">¿Coinciden con la clasificación del Banco Mundial?</h3>
+
+    <table>
+      <thead>
+        <tr><th>Cluster</th><th>Bajo ingreso</th><th>Medio-bajo</th><th>Medio-alto</th><th>Alto ingreso</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>En desarrollo (0)</strong></td><td>31</td><td>37</td><td>24</td><td>7</td></tr>
+        <tr><td><strong>Desarrollado (1)</strong></td><td>0</td><td>7</td><td>24</td><td>61</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.88rem;margin-top:0.5rem;color:var(--gris-medio)">
+      χ² = 135,8 (p ≈ 2×10⁻²⁸) — asociación altamente significativa. Coincidencia
+      parcial con excepciones informativas: Vietnam, Marruecos y Túnez aparecen en el
+      grupo «desarrollado» pese a tener ingreso medio-bajo; Indonesia y Fiji están en
+      «en desarrollo» pese a ser ingreso medio-alto.
+    </p>
+  </section>
+
+  <!-- ═══════════════════════════════════ 5 · TEMPORAL ════════════════════ -->
+  <section id="temporal">
+    <div class="section-title">
+      <span class="section-num">5</span>
+      <h2>Evolución temporal 2005 → 2023</h2>
+    </div>
+
+    <div class="callout callout-info">
+      <strong>Metodología: espacio PCA común</strong>
+      Para comparar los países a lo largo del tiempo de forma válida, ambos años se apilan en
+      un único dataset. Las transformaciones, el escalado y el PCA se ajustan <em>una sola vez</em>
+      sobre los datos combinados. Esto garantiza que las posiciones en 2005 y 2023 sean
+      comparables en el mismo sistema de coordenadas. Ajustar un PCA por año y comparar
+      coordenadas sería inválido (ejes y escalas distintos).
+    </div>
+
+    <h3 style="margin:1.5rem 0 0.8rem; color:var(--azul-principal)">¿Cómo se movieron los países?</h3>
+
+    <div class="fig-block">
+      <img src="figures/fig_trayectorias.png" alt="Trayectorias 2005-2023 en espacio PCA">
+      <div class="fig-caption">
+        <strong>Cómo leer este gráfico:</strong> solo se muestran los 5 países con mayor avance
+        y los 5 con mayor retroceso en el gradiente de desarrollo (PC1).
+        El punto gris es la posición en 2005; la flecha y el punto coloreado indican la posición
+        en 2023. <span style="color:var(--verde-principal)">■</span> Verde = avanzó.
+        <span style="color:var(--rojo-principal)">■</span> Rojo = retrocedió.<br><br>
+        <strong>Qué observar:</strong> los retrocesos más marcados (Líbano, Venezuela, Sudán)
+        tienen causas documentadas: crisis financiera, colapso económico y conflicto armado.
+        Entre los mayores avances destacan Georgia, Zambia y países del sudeste africano
+        con fuertes mejoras en conectividad y salud.
+      </div>
+    </div>
+
+    <h3 style="margin:1.5rem 0 0.8rem; color:var(--azul-principal)">Flujo entre grupos — diagrama de Sankey</h3>
+
+    <div class="fig-block">
+      <img src="figures/fig_transicion_sankey.png" alt="Diagrama de flujo Sankey 2005-2023">
+      <div class="fig-caption">
+        <strong>Cómo leer este gráfico:</strong> cada banda conecta un grupo en 2005 (izquierda)
+        con un grupo en 2023 (derecha). El ancho es proporcional al número de países.
+        <span style="color:var(--azul-principal)">■</span> Azul = permaneció en el grupo desarrollado (77 países).
+        <span style="color:var(--verde-principal)">■</span> Verde = graduó al grupo desarrollado (40 países).
+        <span style="color:var(--rojo-medio)">■</span> Rojo = permaneció en el grupo en desarrollo (66 países).<br><br>
+        La banda de transición inversa (de desarrollado a en desarrollo) tiene ancho cero:
+        <strong>ningún país retrocedió de grupo</strong> en este período.
+        La <strong>congruencia de Tucker</strong> entre las cargas de PC1 en 2005 y 2023 es 0,962
+        — confirma que el gradiente de desarrollo es el mismo eje 18 años después.
+      </div>
+    </div>
+
+    <h3 style="margin:1.5rem 0 0.8rem; color:var(--azul-principal)">Distribución por grupo — gráfico de waffle</h3>
+
+    <div class="fig-block">
+      <img src="figures/fig_transicion_waffle.png" alt="Waffle chart distribución 2005 vs 2023">
+      <div class="fig-caption">
+        <strong>Cómo leer este gráfico:</strong> cada cuadrado representa exactamente 1 país.
+        <span style="color:var(--rojo-medio)">■</span> Rojo = en desarrollo.
+        <span style="color:var(--azul-principal)">■</span> Azul = desarrollado.
+        Comparar los dos waffles lado a lado permite ver visualmente la magnitud del cambio:
+        de 106 países en desarrollo en 2005 a 66 en 2023, y de 77 desarrollados a 117.
+      </div>
+    </div>
+
+    <h3 style="margin:1.5rem 0 0.8rem; color:var(--azul-principal)">¿Qué impulsó el avance?</h3>
+
+    <div class="fig-block">
+      <img src="figures/fig_decomposicion.png" alt="Descomposición del avance en PC1">
+      <div class="fig-caption">
+        <strong>Cómo leer este gráfico:</strong> cada barra muestra cuánto contribuyó cada variable
+        al avance promedio en PC1 entre 2005 y 2023 (+0,96 unidades). Verde = contribución positiva
+        (impulsó el avance). Rojo = contribución negativa (actuó en contra).<br><br>
+        <strong>El avance fue liderado por conectividad (47 %) y salud (22 %), no por el PBI (9 %).</strong>
+        Esto no es un artefacto inflacionario: el PBI per cápita usado es en dólares constantes de 2015
+        (serie real). El progreso reflejado en PC1 mide desarrollo genuino: masificación del acceso
+        a tecnología y mejoras en salud pública de alcance global.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ 6 · CONCLUSIONES ════════════════ -->
+  <section id="conclusiones">
+    <div class="section-title">
+      <span class="section-num">6</span>
+      <h2>Conclusiones</h2>
+    </div>
+
+    <ul class="conclusion-list">
+      <li>
+        <div>
+          <strong style="color:var(--azul-principal)">El desarrollo se organiza como un gradiente unidimensional.</strong>
+          Una sola dimensión —PC1, el «gradiente de desarrollo»— explica el 41 % de la varianza entre 191 países.
+          Esta dimensión integra ingreso, salud, conectividad y estructura económica en un único eje.
+          El análisis paralelo de Horn confirma que la señal es real y no un artefacto del ruido.
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong style="color:var(--azul-principal)">Dos grupos robustos y replicables.</strong>
+          K-means identifica dos clusters con alta estabilidad bootstrap (Jaccard > 0,94),
+          confirmada por el Gap Statistic y tres métricas internas independientes. Los grupos
+          coinciden en gran medida con la clasificación del Banco Mundial, pero con excepciones
+          instructivas que señalan países «por encima» o «por debajo» de lo esperado
+          para su nivel de ingreso.
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong style="color:var(--azul-principal)">Progreso generalizado impulsado por salud y tecnología.</strong>
+          Entre 2005 y 2023, casi todos los países avanzaron en PC1. El motor principal fue
+          Internet (47 %) y la esperanza de vida (22 %), no el PBI (9 %). Esto sugiere que
+          el desarrollo humano y tecnológico se expandió con mayor alcance y equidad que
+          el crecimiento económico puro.
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong style="color:var(--azul-principal)">El avance no es universal ni irreversible.</strong>
+          40 países cruzaron la frontera hacia el grupo más desarrollado; ninguno retrocedió
+          en términos de cluster. Sin embargo, Líbano, Venezuela y Sudán retrocedieron
+          sustancialmente en PC1, evidenciando que el progreso puede revertirse bajo
+          crisis políticas, económicas o humanitarias severas.
+        </div>
+      </li>
+    </ul>
+
+    <div class="callout callout-warn" style="margin-top:2rem">
+      <strong>Limitaciones a tener en cuenta</strong>
+      El análisis es <em>transversal y descriptivo</em>: no permite inferencia causal.
+      La imputación de datos faltantes (≤ 15 %) y la presencia de outliers (re-export hubs,
+      petro-estados) no dirigen los resultados —verificado por análisis de sensibilidad—
+      salvo una excepción documentada: el RobustScaler amplifica el outlier de crecimiento
+      del PBI de Macao (+75 % en 2023), lo que respalda el uso de StandardScaler.
+    </div>
+
+    <hr>
+
+    <div class="findings-grid">
+      <div class="finding-card">
+        <div class="icon">📊</div>
+        <h4>Metodología reproducible</h4>
+        <p>El pipeline completo se reproduce ejecutando <code>python src/run_all.py</code>.
+        Todas las decisiones están documentadas en <code>reports/decisiones_metodologicas.md</code>.</p>
+      </div>
+      <div class="finding-card">
+        <div class="icon">🎨</div>
+        <h4>Figuras mejoradas</h4>
+        <p>Las visualizaciones de esta presentación se generan con
+        <code>python Benja/figures_mejoradas.py</code>. El notebook interactivo está en
+        <code>Benja/presentacion_mejoras.ipynb</code>.</p>
+      </div>
+      <div class="finding-card">
+        <div class="icon">🌍</div>
+        <h4>Fuente de datos</h4>
+        <p>World Development Indicators, Banco Mundial (WDI, source = 2).
+        Snapshot fijo descargado vía API REST — reproducible aunque la API cambie.</p>
+      </div>
+      <div class="finding-card">
+        <div class="icon">✅</div>
+        <h4>Robustez verificada</h4>
+        <p>Los resultados son prácticamente idénticos con MICE (ARI = 0,979), casos
+        completos (0,972), distintas cantidades de componentes PCA (0,94–1,00)
+        y excluyendo los 10 mayores outliers (0,934).</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ────────────────────────────────────────────────────────── FOOTER ── -->
+<footer>
+  <p>
+    <strong>Patrones de desarrollo mundial · PCA y Clustering sobre WDI</strong><br>
+    Trabajo Práctico Final · Análisis Multivariado y Descubrimiento de Patrones<br>
+    Universidad Austral · 2024<br><br>
+    Datos: World Development Indicators, Banco Mundial (2005 y 2023) ·
+    Pipeline: Python 3 · scikit-learn · pandas · matplotlib
+  </p>
+</footer>
+
+</body>
+</html>

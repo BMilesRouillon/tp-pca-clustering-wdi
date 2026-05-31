@@ -1,0 +1,23 @@
+Archivo: Benja/theme.py
+Tipo: módulo Python de configuración visual
+
+QUÉ HACE
+--------
+Define la paleta de colores institucional completa (#174EA6, #EA4335, #34A853, etc.)
+y una función apply_theme() que configura los parámetros globales de matplotlib
+(tipografía Arial, tamaños de texto, fondo blanco, sin bordes superior/derecho).
+
+POR QUÉ SE MODIFICÓ / CREÓ
+---------------------------
+No existía ningún archivo de estilo centralizado en el proyecto. Cada figura del pipeline
+original usaba colores y tipografías inconsistentes (seaborn por defecto). Centralizar
+el estilo en un único módulo garantiza coherencia visual en todas las figuras con un
+solo import: `import theme as T; T.apply_theme()`.
+
+QUÉ MEJORA APORTA
+-----------------
+- Coherencia: todos los gráficos comparten la misma paleta y tipografía.
+- Mantenibilidad: cambiar un color o tamaño de fuente se hace en un solo lugar.
+- Reutilizabilidad: cualquier nuevo script o notebook puede importar este módulo.
+- Calidad académica: los colores institucionales dan una apariencia profesional
+  consistente a lo largo de todo el informe.

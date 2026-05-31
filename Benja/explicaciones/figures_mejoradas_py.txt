@@ -1,0 +1,44 @@
+Archivo: Benja/figures_mejoradas.py
+Tipo: script Python — generador de figuras
+
+QUÉ HACE
+--------
+Genera 11 figuras mejoradas a partir de los datos en data/processed/ y las guarda
+en Benja/figures/. Cada función produce una figura específica:
+
+  fig_correlacion()     → Matriz 14×14: diagonal con histogramas, triángulo superior
+                          con coeficiente de Spearman coloreado por magnitud y signo.
+  fig_scree()           → Scree plot con barras de varianza + línea acumulada +
+                          umbral del análisis paralelo de Horn.
+  fig_loadings()        → Barras horizontales de cargas para PC1, PC2 y PC3.
+  fig_biplot_ingreso()  → Scatter PC1-PC2 con flechas de carga y color por ingreso.
+  fig_clusters(k)       → Clusters k=2 y k=3 proyectados sobre PC1-PC2.
+  fig_metricas_k()      → Panel 2×2 con Silhouette, CH, DB e Inercia vs. k.
+  fig_silhouette_k2()   → Diagrama de silhouette para el clustering final.
+  fig_trayectorias()    → Flechas de trayectorias 2005→2023 en espacio PCA común.
+  fig_transicion()      → Heatmap 2×2 de la matriz de transición de clusters.
+  fig_decomposicion()   → Barras horizontales de contribución al avance en PC1.
+
+POR QUÉ SE MODIFICÓ / CREÓ
+---------------------------
+Las figuras originales (en reports/figures/) usan el tema seaborn por defecto con
+paletas genéricas. Los objetivos específicos de esta versión mejorada:
+
+  1. Correlaciones: la figura original era un heatmap sin distribuciones marginales.
+     Se reemplazó por una matriz académica con histogramas en la diagonal, más
+     informativa y visualmente clara.
+  2. Scree: se agregó la indicación visual del umbral de Horn y se destacaron los
+     componentes retenidos con barras de color distinto.
+  3. Loadings: se cambió de heatmap a barras horizontales, más fáciles de comparar.
+  4. Trayectorias: se diferenciaron visualmente los países que cambiaron de cluster
+     (flechas verdes) de los que no (gris fino), reduciendo el ruido visual.
+  5. Transición: se usó una matriz de calor personalizada con texto legible, colores
+     semánticos (azul = permaneció, verde = cambió) y una leyenda explicativa.
+  6. Todas las figuras usan la paleta institucional via theme.py.
+
+QUÉ MEJORA APORTA
+-----------------
+- Las figuras mejoradas son visualmente más claras, más académicas y más informativas.
+- La paleta consistente facilita la lectura comparativa entre secciones.
+- Las anotaciones y leyendas reducen la carga cognitiva del lector.
+- Las flechas de trayectorias permiten entender el movimiento temporal de un vistazo.
